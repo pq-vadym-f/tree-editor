@@ -1,17 +1,248 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #243342;
+  background: #f3f5f7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: system-ui, sans-serif;
-  color: #222;
-  background: #f5f5f5;
 }
 
 main {
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 24px;
+  max-width: 1280px;
+  margin: 28px auto;
+  padding: 0 24px 40px;
+}
+
+h1 {
+  margin-bottom: 4px;
+}
+
+h2 {
+  font-size: 1.15rem;
+  margin-top: 0;
+}
+
+header p {
+  margin-top: 0;
+  color: #526170;
+}
+
+button,
+input {
+  font: inherit;
+  border: 1px solid #aab5bf;
+  border-radius: 4px;
 }
 
 button {
-  padding: 8px 16px;
+  padding: 8px 12px;
+  background: white;
+  color: inherit;
   cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: #edf3fa;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid #6b9ece;
+  outline-offset: 2px;
+}
+
+.primary {
+  background: #205a91;
+  color: white;
+  border-color: #205a91;
+}
+
+.primary:hover:not(:disabled) {
+  background: #174671;
+}
+
+.danger {
+  color: #9b2727;
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hint {
+  color: #5b6773;
+  font-size: 0.9rem;
+}
+
+.feedback {
+  min-height: 28px;
+}
+
+.error {
+  color: #9b2727;
+  background: #fff1ef;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.tree-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.panel {
+  min-width: 0;
+  padding: 18px;
+  background: white;
+  border: 1px solid #d1d8df;
+  border-radius: 6px;
+}
+
+.tree {
+  min-height: 250px;
+  max-height: 500px;
+  overflow: auto;
+  margin: 16px 0;
+}
+
+.tree-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 38px;
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto 38px;
+}
+
+/* Keep keyboard focus outlines inside the row's paint containment. */
+.tree-row button:focus-visible {
+  outline-offset: -3px;
+}
+
+.node-label {
+  text-align: left;
+  border-color: transparent;
+  overflow-wrap: anywhere;
+  min-width: 60px;
+}
+
+.node-label.selected {
+  background: #e0edfa;
+  border-color: #699bd0;
+}
+
+.expander {
+  width: 28px;
+  flex: 0 0 28px;
+  padding: 4px;
+}
+
+.expander:disabled {
+  opacity: 0.65;
+}
+
+.tree-marker {
+  width: 22px;
+  flex: 0 0 22px;
+  text-align: center;
+  color: #7b8793;
+}
+
+.badge {
+  font-size: 0.72rem;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: #edf0f3;
+  white-space: nowrap;
+}
+
+.badge.new {
+  background: #e3f3e9;
+  color: #285f3c;
+}
+
+.badge.modified {
+  background: #fff0cf;
+  color: #75501c;
+}
+
+.badge.deleted {
+  background: #fce2df;
+  color: #9b2727;
+}
+
+.deleted .node-label {
+  text-decoration: line-through;
+  color: #9b2727;
+}
+
+.gap {
+  color: #677785;
+}
+
+.branch-status {
+  padding: 8px 0;
+  font-size: 0.9rem;
+}
+
+.editor {
+  margin-top: 18px;
+  max-width: 800px;
+}
+
+.editor label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.editor input {
+  width: 100%;
+  padding: 9px;
+}
+
+.editor form {
+  margin: 20px 0;
+}
+
+.inline-form {
+  display: flex;
+  gap: 8px;
+}
+
+.inline-form button {
+  white-space: nowrap;
+}
+
+.node-id {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+  main {
+    padding: 0 12px 24px;
+    margin-top: 16px;
+  }
+
+  .tree-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tree {
+    min-height: 150px;
+    max-height: 360px;
+  }
 }

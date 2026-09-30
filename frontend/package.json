@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "format": "prettier --write src tests index.html vite.config.ts",
+    "format:check": "prettier --check src tests index.html vite.config.ts",
     "lint": "oxlint",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -19,6 +22,7 @@
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
     "oxlint": "^1.81.0",
+    "prettier": "^3.9.9",
     "typescript": "~6.0.2",
     "vite": "^8.3.0"
   }

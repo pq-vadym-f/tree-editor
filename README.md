@@ -1,59 +1,88 @@
-# Tree Editor
+﻿# Tree Editor
 
-Full-stack tree editor assignment using ASP.NET Core, React,
-TypeScript, and PostgreSQL.
+## Run locally
 
+Requires .NET 10 SDK, Node.js 22.12+, and Docker Desktop running.
+Run all commands from the repository root.
 
-## Prerequisites
+1. Start PostgreSQL:
 
-- .NET 10 SDK
-- Node.js 22.12+
-- Docker Desktop running
+   ```powershell
+   docker compose up -d --wait
+   ```
 
-## Install dependencies
+2. Start the API (http://localhost:5000). Startup automatically applies EF Core
+   migrations and seeds sample data once:
 
-Run from the repository root:
+   ```powershell
+   dotnet run --project backend/src/TreeEditor.Api
+   ```
 
-```powershell
-dotnet restore
-npm --prefix frontend ci
-```
+3. In another terminal, install dependencies and start the UI:
 
-## Start
+   ```powershell
+   npm --prefix frontend ci
+   npm --prefix frontend run dev
+   ```
 
-Start PostgreSQL:
+   Open http://localhost:5173.
 
-```powershell
-docker compose up -d --wait
-```
+## API documentation and checks
 
-Start the API in one terminal:
+In Development, the API serves its OpenAPI document at
+http://localhost:5000/openapi/v1.json. The document includes endpoint descriptions,
+request and response schemas, and error status codes.
 
-```powershell
-dotnet run --project backend/TreeEditor.Api --no-launch-profile --urls http://localhost:5000
-```
+`backend/src/TreeEditor.Api/TreeEditor.Api.http` contains requests for every
+endpoint, plus missing-node and invalid-value examples. Set `nodeId` and
+`nodeVersion` from the root-list response before running the node and apply
+requests. The last request resets the database to fresh sample data.
 
-Start the UI in another terminal:
+The apply endpoint is an atomic batch action returning `200 OK` with committed
+versions. Reset returns `204 No Content` after replacing the sample tree.
 
-```powershell
-npm --prefix frontend run dev
-```
-
-Open http://localhost:5173.
-
-## Database
-
-PostgreSQL runs in Docker and is available locally on port 5432.
-
-- Database: tree_editor
-- Username: tree_editor
-- Password: dev_password
-
-(These credentials are for local development).
-
-
-Stop PostgreSQL while keeping data:
+With PostgreSQL running, run the backend checks from the repository root:
 
 ```powershell
-docker compose down
+dotnet build TreeEditor.slnx
+dotnet test TreeEditor.slnx --no-build
+node --test backend/tests/*.test.mjs
+dotnet format TreeEditor.slnx --no-restore --verify-no-changes
 ```
+
+## Stop and remove Docker resources
+
+Stop the API and UI with `Ctrl+C` in their terminals, then run from the repository
+root:
+
+```powershell
+docker compose down --volumes --rmi all --remove-orphans
+```
+
+This removes this project's Docker containers, networks, PostgreSQL image, and
+`postgres_data` volume. **Deleting the volume permanently deletes all database
+data.** The next time you start PostgreSQL and the API, the database is recreated
+and sample data is seeded again.
+
+
+## Implementation decisions
+
+- Core contains domain rules and services; Infrastructure handles EF Core and
+  PostgreSQL; API exposes HTTP endpoints.
+- The React UI loads branches on demand and keeps edits in a sparse, in-memory
+  cache until **Apply all changes** is pressed. Reloading the page loses pending edits.
+- Apply commits the entire batch in one serializable transaction; version checks
+  reject stale edits. Recursive SQL deletes whole subtrees, including unloaded
+  descendants, with a deferred foreign key allowing deletion in one statement.
+
+## Database schema
+
+Start with an empty database; the API creates its schema through EF Core
+migrations. Databases created before EF migrations must be recreated.
+
+PostgreSQL stores the tree in `tree_nodes`: UUID primary key `id`, nullable
+`parent_id` referencing another node (null for roots), nonblank text `value`
+(up to 500 characters), and bigint `version` for concurrency checks.
+The `(parent_id, id)` index supports child queries. Existing IDs and parents
+are immutable. `tree_initialization` holds a single marker so an intentionally
+emptied tree is not reseeded after restart.

@@ -1,5 +1,10 @@
 <Solution>
   <Folder Name="/backend/">
-    <Project Path="backend/TreeEditor.Api/TreeEditor.Api.csproj" />
+    <Project Path="backend/src/TreeEditor.Api/TreeEditor.Api.csproj" />
+    <Project Path="backend/src/TreeEditor.Core/TreeEditor.Core.csproj" />
+    <Project Path="backend/src/TreeEditor.Infrastructure/TreeEditor.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/backend/tests/">
+    <Project Path="backend/tests/TreeEditor.UnitTests/TreeEditor.UnitTests.csproj" />
   </Folder>
 </Solution>
