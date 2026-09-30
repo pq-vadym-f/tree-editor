@@ -1,32 +1,27 @@
-# React + TypeScript + Vite
+# Tree Editor frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React and TypeScript, built with Vite. See the [root README](../README.md) for
+backend/database setup and the editor workflow.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```powershell
+npm ci
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Vite serves http://localhost:5173 and proxies `/api` to http://localhost:5000.
+Run these commands from this directory to check the frontend:
+
+```powershell
+npm test
+npm run build
+npm run lint
+npm run format:check
+```
+
+Run `npm run format` to apply the shared formatting rules to the frontend source and tests.
+
+`src/main.tsx` mounts the tree feature. `src/features/tree/api.ts` contains HTTP
+calls, `cache.ts` contains pure cache transitions, and `types.ts` defines API
+contracts. Hooks own asynchronous paging and editing workflows; components
+render the database tree, sparse cache, and selected-node editor. The cache
+never makes network requests or writes to the database on its own.

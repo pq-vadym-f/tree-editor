@@ -1,0 +1,51 @@
+@baseUrl = http://localhost:5000
+@nodeId = 00000000-0000-0000-0000-000000000001
+@nodeVersion = 1
+@newNodeId = 87fffa48-3692-4d31-b74f-09cec546bc09
+
+###
+GET {{baseUrl}}/api/health
+
+###
+GET {{baseUrl}}/openapi/v1.json
+
+###
+GET {{baseUrl}}/api/tree/children?limit=50
+
+###
+GET {{baseUrl}}/api/tree/children?parentId={{nodeId}}&limit=50
+
+###
+GET {{baseUrl}}/api/tree/nodes/{{nodeId}}
+
+###
+POST {{baseUrl}}/api/tree/apply
+Content-Type: application/json
+
+{
+  "creates": [
+    { "id": "{{newNodeId}}", "parentId": "{{nodeId}}", "value": "New child" }
+  ],
+  "updates": [
+    { "id": "{{nodeId}}", "version": {{nodeVersion}}, "value": "Updated node" }
+  ],
+  "deletes": []
+}
+
+###
+GET {{baseUrl}}/api/tree/nodes/ffffffff-ffff-ffff-ffff-ffffffffffff
+
+###
+POST {{baseUrl}}/api/tree/apply
+Content-Type: application/json
+
+{
+  "creates": [],
+  "updates": [
+    { "id": "{{nodeId}}", "version": {{nodeVersion}}, "value": " " }
+  ],
+  "deletes": []
+}
+
+###
+POST {{baseUrl}}/api/tree/reset
