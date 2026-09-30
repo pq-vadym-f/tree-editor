@@ -1,9 +1,17 @@
 ﻿# Tree Editor
 
+## Afterthoughts
+
+Looking back at this implementation, I'd save drafts locally so refreshing the
+browser wouldn't lose pending edits. I'd also let users start a new tree after
+deleting the last root and resolve save conflicts without discarding their work.
+
 ## Run locally
 
 Requires .NET 10 SDK, Node.js 22.12+, and Docker Desktop running.
 Run all commands from the repository root.
+
+Databases created before EF migrations must be recreated.
 
 1. Start PostgreSQL:
 
@@ -67,22 +75,10 @@ and sample data is seeded again.
 
 ## Implementation decisions
 
-- Core contains domain rules and services; Infrastructure handles EF Core and
-  PostgreSQL; API exposes HTTP endpoints.
-- The React UI loads branches on demand and keeps edits in a sparse, in-memory
-  cache until **Apply all changes** is pressed. Reloading the page loses pending edits.
-- Apply commits the entire batch in one serializable transaction; version checks
-  reject stale edits. Recursive SQL deletes whole subtrees, including unloaded
-  descendants, with a deferred foreign key allowing deletion in one statement.
-
-## Database schema
-
-Start with an empty database; the API creates its schema through EF Core
-migrations. Databases created before EF migrations must be recreated.
-
-PostgreSQL stores the tree in `tree_nodes`: UUID primary key `id`, nullable
-`parent_id` referencing another node (null for roots), nonblank text `value`
-(up to 500 characters), and bigint `version` for concurrency checks.
-The `(parent_id, id)` index supports child queries. Existing IDs and parents
-are immutable. `tree_initialization` holds a single marker so an intentionally
-emptied tree is not reseeded after restart.
+- PostgreSQL stores one row per node with an ID, parent ID (null for roots), value,
+  and version. Parent references form the tree.
+- React loads branches on demand and keeps editable nodes in an in-memory `Map`
+  keyed by ID. Edits are saved with **Apply all changes**; reloading loses pending edits.
+- Apply saves the entire batch atomically; version checks reject stale edits.
+- Deleting a node removes its entire subtree, including descendants not loaded
+  in the browser.
