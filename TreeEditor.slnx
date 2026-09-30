@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/backend/">
+    <Project Path="backend/TreeEditor.Api/TreeEditor.Api.csproj" />
+  </Folder>
+</Solution>
